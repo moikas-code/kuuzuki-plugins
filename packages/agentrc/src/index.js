@@ -373,6 +373,42 @@ const displayKuuzukiBanner = async (config, logger) => {
 };
 
 /**
+ * Parse memory command from chat text
+ */
+const parseMemoryCommandFromText = (text) => {
+  // Remove "memory " prefix
+  const commandPart = text.replace(/^memory\s+/, '');
+  
+  const args = {};
+  
+  // Split by spaces but respect quoted strings
+  const parts = commandPart.match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g) || [];
+  
+  parts.forEach(part => {
+    const equalIndex = part.indexOf('=');
+    if (equalIndex > 0) {
+      const key = part.substring(0, equalIndex);
+      let value = part.substring(equalIndex + 1);
+      
+      // Remove quotes if present
+      if ((value.startsWith('"') && value.endsWith('"')) || 
+          (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      
+      // Convert ruleId to number
+      if (key === 'ruleId') {
+        args[key] = parseInt(value, 10);
+      } else {
+        args[key] = value;
+      }
+    }
+  });
+  
+  return args;
+};
+
+/**
  * Handle memory/rules management commands
  */
 const handleMemoryCommand = async (args, config, configPath) => {
@@ -470,6 +506,41 @@ export const KuuzukiAgentrcPlugin = async ({ app, client, $ }) => {
   }
 
   return {
+    /**
+     * Intercept chat messages for memory commands
+     */
+    "chat.message": async (input, output) => {
+      const message = output.message?.content;
+      
+      // Only intercept messages that start with "memory" - minimal scope
+      if (message && typeof message === 'string' && message.trim().startsWith('memory ')) {
+        try {
+          // Parse memory command from chat message
+          const commandText = message.trim();
+          const args = parseMemoryCommandFromText(commandText);
+          
+          await logger.info(`🧠 Processing memory command: ${args.action}`);
+          
+          // Execute memory command
+          const result = await handleMemoryCommand(args, agentrcConfig, configPath);
+          
+          // Replace the message content with the result
+          output.message.content = `${result.title}\n\n${result.output}`;
+          
+          // Success notification
+          if (args.action === "add" && args.rule) {
+            await logger.success(`✅ Rule added via chat: "${args.rule}"`);
+          } else if (args.action === "remove" && args.ruleId !== undefined) {
+            await logger.success(`✅ Rule removed via chat`);
+          }
+          
+        } catch (error) {
+          await logger.error(`❌ Memory command failed: ${error.message}`);
+          output.message.content = `❌ Memory command failed: ${error.message}`;
+        }
+      }
+    },
+
     /**
      * Register custom commands
      */
