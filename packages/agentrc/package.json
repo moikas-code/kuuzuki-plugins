@@ -16,16 +16,20 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node test-plugin.js",
-    "install-global": "mkdir -p ~/.config/opencode/plugin && cp src/index.js ~/.config/opencode/plugin/kuuzuki-agentrc.js",
-    "install-project": "mkdir -p .opencode/plugin && cp src/index.js .opencode/plugin/kuuzuki-agentrc.js",
-    "dev": "npm run install-global && echo '🌸 Kuuzuki installed for development'",
+    "test": "node testtt/test-plugin.js",
+    "build": "bun --bun build.js",
+    "build:watch": "bun --bun --watch build.js",
+    "install-global": "npm run build && mkdir -p ~/.config/opencode/plugin && cp dist/kuuzuki-agentrc.js ~/.config/opencode/plugin/kuuzuki-agentrc.js",
+    "install-project": "npm run build && mkdir -p .opencode/plugin && cp dist/kuuzuki-agentrc.js .opencode/plugin/kuuzuki-agentrc.js",
+    "dev": "npm run build && mkdir -p ~/.config/opencode/plugin && rm -f ~/.config/opencode/plugin/kuuzuki-agentrc.js && ln -s $(pwd)/dist/kuuzuki-agentrc.js ~/.config/opencode/plugin/kuuzuki-agentrc.js && echo '🌸 Kuuzuki symlinked for live development'",
+    "dev:watch": "npm run build:watch",
+    "dev-project": "npm run build && mkdir -p .opencode/plugin && rm -f .opencode/plugin/kuuzuki-agentrc.js && ln -s $(pwd)/dist/kuuzuki-agentrc.js .opencode/plugin/kuuzuki-agentrc.js && echo '🌸 Kuuzuki symlinked for project development'",
     "uninstall": "rm -f ~/.config/opencode/plugin/kuuzuki-agentrc.js && echo '🌸 Kuuzuki removed'"
   },
   "keywords": [
     "kuuzuki",
     "opencode",
-    "agentrc", 
+    "agentrc",
     "ai-assistant",
     "project-intelligence",
     "configuration-management",

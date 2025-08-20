@@ -1,0 +1,36 @@
+{
+  "project": {
+    "name": "kuuzuki-plugins",
+    "type": "node-project",
+    "description": "Project enhanced with kuuzuki .agentrc support",
+    "language": "javascript",
+    "framework": null
+  },
+  "commands": {
+    "build": "npm run build",
+    "test": "npm test",
+    "dev": "npm run dev",
+    "lint": "npm run lint"
+  },
+  "codeStyle": {
+    "language": "javascript"
+  },
+  "rules": [
+    "Follow existing code style and patterns",
+    "Write tests for new functionality",
+    "Use semantic commit messages",
+    "Prefer async/await over Promise.then()"
+  ],
+  "tools": {
+    "packageManager": "npm"
+  },
+  "dependencies": {
+    "critical": []
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "generator": "kuuzuki-opencode-plugin",
+    "created": "2025-08-20T04:49:23.759Z",
+    "analyzed": true
+  }
+}

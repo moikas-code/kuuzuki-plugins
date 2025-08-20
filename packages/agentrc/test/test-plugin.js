@@ -51,6 +51,15 @@ async function testPlugin() {
     console.log('\n✅ Plugin initialized successfully!');
     console.log('Available hooks:', Object.keys(hooks));
     
+    // Test init command
+    console.log('\n🧪 Testing init command override...');
+    if (hooks.commands && hooks.commands.init) {
+      const initResult = await hooks.commands.init();
+      console.log('Init command result:', initResult);
+    } else {
+      console.log('❌ Init command not found');
+    }
+    
     // Test session start event
     console.log('\n🧪 Testing session start event...');
     await hooks.event({ event: { type: 'session.start', data: {}, timestamp: Date.now() } });

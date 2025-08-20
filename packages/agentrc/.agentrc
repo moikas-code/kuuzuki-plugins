@@ -1,0 +1,48 @@
+{
+  "project": {
+    "name": "agentrc",
+    "type": "node-project",
+    "description": "Project enhanced with kuuzuki .agentrc support",
+    "language": "javascript",
+    "framework": null
+  },
+  "commands": {
+    "build": "bun run build",
+    "test": "bun test",
+    "dev": "bun run dev"
+  },
+  "codeStyle": {
+    "language": "javascript",
+    "paradigm": "functional-oop-hybrid",
+    "methodology": "DRY",
+    "naming": "functional-descriptive",
+    "runtime": "bun"
+  },
+  "rules": [
+    "Always use JavaScript/Bun - avoid TypeScript unless absolutely necessary",
+    "Use functional programming paradigms combined with OOP when appropriate",
+    "Apply DRY (Don't Repeat Yourself) methodology rigorously",
+    "Use descriptive, functional names for variables, functions, and classes",
+    "Follow existing code style and patterns",
+    "Use JSDoc comments for type documentation instead of TypeScript",
+    "Write tests for new functionality using functional testing approaches",
+    "Prefer pure functions - avoid side effects where possible",
+    "Use higher-order functions for code reuse and composition",
+    "When using classes, keep them focused with single responsibility",
+    "Favor composition over inheritance",
+    "Use semantic commit messages",
+    "Prefer async/await over Promise.then() for readable async code"
+  ],
+  "tools": {
+    "packageManager": "bun"
+  },
+  "dependencies": {
+    "critical": []
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "generator": "kuuzuki-opencode-plugin",
+    "created": "2025-08-20T05:01:08.174Z",
+    "analyzed": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "kuuzuki-plugins",
+    },
+    "packages/agentrc": {
+      "name": "@kuuzuki/agentrc",
+      "version": "1.0.0",
+      "bin": {
+        "kuuzuki": "src/cli.js",
+      },
+    },
+  },
+  "packages": {
+    "@kuuzuki/agentrc": ["@kuuzuki/agentrc@workspace:packages/agentrc"],
+  }
+}
