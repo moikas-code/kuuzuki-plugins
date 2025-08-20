@@ -1,0 +1,41 @@
+{
+  "name": "kuuzuki-plugins",
+  "version": "1.0.0",
+  "private": true,
+  "description": "🌸 Official kuuzuki plugins for OpenCode - enhanced AI assistance and project intelligence",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "install-global": "cd packages/agentrc && npm run install-global",
+    "install-project": "cd packages/agentrc && npm run install-project",
+    "dev": "npm run install-global && echo '🌸 Kuuzuki plugins installed for development'"
+  },
+  "keywords": [
+    "kuuzuki",
+    "kuuzuki-plugins",
+    "opencode",
+    "plugins",
+    "agentrc",
+    "ai-assistant",
+    "project-intelligence",
+    "configuration-management"
+  ],
+  "author": "moikas-code",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moikas-code/kuuzuki-plugins"
+  },
+  "bugs": {
+    "url": "https://github.com/moikas-code/kuuzuki-plugins/issues"
+  },
+  "homepage": "https://github.com/moikas-code/kuuzuki-plugins#readme"
+}

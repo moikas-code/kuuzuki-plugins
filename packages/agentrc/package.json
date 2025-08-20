@@ -1,0 +1,51 @@
+{
+  "name": "@kuuzuki/agentrc",
+  "version": "1.0.0",
+  "description": "🌸 Complete kuuzuki experience for OpenCode - project intelligence, .agentrc support, memory tools, and enhanced AI assistance",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "kuuzuki": "./src/cli.js"
+  },
+  "files": [
+    "src/",
+    "examples/",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node test-plugin.js",
+    "install-global": "mkdir -p ~/.config/opencode/plugin && cp src/index.js ~/.config/opencode/plugin/kuuzuki-agentrc.js",
+    "install-project": "mkdir -p .opencode/plugin && cp src/index.js .opencode/plugin/kuuzuki-agentrc.js",
+    "dev": "npm run install-global && echo '🌸 Kuuzuki installed for development'",
+    "uninstall": "rm -f ~/.config/opencode/plugin/kuuzuki-agentrc.js && echo '🌸 Kuuzuki removed'"
+  },
+  "keywords": [
+    "kuuzuki",
+    "opencode",
+    "agentrc", 
+    "ai-assistant",
+    "project-intelligence",
+    "configuration-management",
+    "memory-tool",
+    "security",
+    "legacy-support",
+    "command-mapping"
+  ],
+  "author": "moikas-code",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moikas-code/kuuzuki-plugins",
+    "directory": "packages/agentrc"
+  },
+  "bugs": {
+    "url": "https://github.com/moikas-code/kuuzuki-plugins/issues"
+  },
+  "homepage": "https://github.com/moikas-code/kuuzuki-plugins/tree/main/packages/agentrc#readme"
+}

@@ -1,0 +1,117 @@
+{
+  "project": {
+    "name": "example-project",
+    "type": "typescript-react-app",
+    "description": "Example project with kuuzuki .agentrc configuration",
+    "version": "1.0.0",
+    "structure": {
+      "packages": ["frontend", "backend"],
+      "mainEntry": "src/index.tsx",
+      "srcDir": "src",
+      "testDir": "src/__tests__",
+      "docsDir": "docs"
+    }
+  },
+  "commands": {
+    "build": "npm run build",
+    "test": "npm test",
+    "testSingle": "npm test -- {file}",
+    "testWatch": "npm test -- --watch",
+    "lint": "eslint src/",
+    "lintFix": "eslint src/ --fix", 
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write src/",
+    "dev": "npm run dev",
+    "start": "npm start",
+    "install": "npm install",
+    "clean": "rm -rf dist node_modules/.cache"
+  },
+  "codeStyle": {
+    "language": "typescript",
+    "formatter": "prettier",
+    "linter": "eslint",
+    "importStyle": "esm",
+    "quotesStyle": "double",
+    "semicolons": false,
+    "trailingCommas": true,
+    "indentation": {
+      "type": "spaces",
+      "size": 2
+    }
+  },
+  "conventions": {
+    "fileNaming": "kebab-case",
+    "functionNaming": "camelCase", 
+    "variableNaming": "camelCase",
+    "componentNaming": "PascalCase",
+    "constantNaming": "UPPER_CASE",
+    "testFiles": "*.test.{ts,tsx}",
+    "configFiles": ["tsconfig.json", "package.json", ".eslintrc.js"]
+  },
+  "tools": {
+    "packageManager": "npm",
+    "runtime": "node", 
+    "bundler": "vite",
+    "framework": "react",
+    "database": "postgresql",
+    "testing": "jest",
+    "ci": "github-actions"
+  },
+  "paths": {
+    "src": "src",
+    "tests": "src/__tests__", 
+    "docs": "docs",
+    "config": "config",
+    "build": "dist",
+    "assets": "public"
+  },
+  "rules": [
+    "Always use TypeScript strict mode",
+    "Prefer functional components with hooks over class components", 
+    "Use async/await instead of .then() for promises",
+    "All components must have proper TypeScript types",
+    "Write tests for all business logic functions",
+    "Use semantic commit messages",
+    "Follow existing code patterns and conventions",
+    "Prefer const over let when possible",
+    "Use descriptive variable and function names"
+  ],
+  "dependencies": {
+    "critical": ["react", "typescript", "@types/node"],
+    "preferred": ["lodash-es", "date-fns", "zod"],
+    "avoid": ["moment", "jquery", "underscore"]
+  },
+  "environment": {
+    "nodeVersion": ">=18.0.0",
+    "envFiles": [".env", ".env.local", ".env.production"],
+    "requiredEnvVars": ["DATABASE_URL", "API_KEY"]
+  },
+  "security": {
+    "sensitiveFiles": [
+      ".env*",
+      "*.key", 
+      "*.pem",
+      "auth.json",
+      "*.secret"
+    ],
+    "restrictedPaths": [
+      "node_modules/**",
+      ".git/**",
+      "dist/**"
+    ]
+  },
+  "agent": {
+    "preferredTools": ["read", "write", "edit", "bash", "grep"],
+    "disabledTools": ["webfetch"],
+    "maxFileSize": 100000,
+    "ignorePatterns": ["node_modules/**", "dist/**", "*.log"],
+    "contextFiles": ["README.md", "package.json", "tsconfig.json"]
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-01-28T10:30:00Z",
+    "updated": "2025-01-28T10:30:00Z", 
+    "generator": "kuuzuki-opencode-plugin",
+    "author": "Development Team"
+  }
+}
