@@ -7,7 +7,7 @@
  * the plugin functionality without requiring OpenCode installation.
  */
 
-import { KuuzukiAgentrcPlugin } from './src/index.js';
+import { KuuzukiAgentrcPlugin } from '../src/index.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 

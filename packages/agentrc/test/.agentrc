@@ -1,15 +1,14 @@
 {
   "project": {
-    "name": "agentrc",
-    "type": "node-project",
+    "name": "test",
+    "type": "opencode-project",
     "description": "Project enhanced with kuuzuki .agentrc support",
     "language": "javascript",
     "framework": null
   },
   "commands": {
-    "build": "bun run build",
-    "test": "bun test",
-    "dev": "bun run dev"
+    "build": "npm run build",
+    "test": "npm test"
   },
   "codeStyle": {
     "language": "javascript",
@@ -20,33 +19,21 @@
   },
   "rules": [
     "Always use JavaScript/Bun - avoid TypeScript unless absolutely necessary",
-    "Follow a hybrid approach to functional and OOP programming - leverage the best of both paradigms",
+    "Use functional programming paradigms combined with OOP when appropriate",
     "Apply DRY (Don't Repeat Yourself) methodology rigorously",
     "Use descriptive, functional names for variables, functions, and classes",
     "Follow existing code style and patterns",
-    "Use ES6 imports with explicit file extensions (.js)",
-    "No semicolons, 2-space indentation, prefer const/let",
     "Use JSDoc comments for type documentation instead of TypeScript",
-    "Comprehensive JSDoc blocks for all exported functions",
+    "Write tests for new functionality using functional testing approaches",
     "Prefer pure functions - avoid side effects where possible",
     "Use higher-order functions for code reuse and composition",
     "When using classes, keep them focused with single responsibility",
     "Favor composition over inheritance",
-    "Write tests for new functionality using functional testing approaches",
-    "Use try/catch blocks with descriptive error messages",
-    "Prefer async/await over Promise.then() for readable async code",
     "Use semantic commit messages",
-    "Always validate user input",
-    "Use constants for magic numbers",
-    "Prefer map() over forEach() for transformations",
-    "Log all database queries in development",
-    "Cache expensive calculations",
-    "Update documentation when changing APIs",
-    "when working on a feature, add it to a docs/task/ dir and create one if it doesn't exist",
-    "add .md files to docs/tasks when implementing a new feature"
+    "Prefer async/await over Promise.then() for readable async code"
   ],
   "tools": {
-    "packageManager": "bun"
+    "packageManager": "npm"
   },
   "dependencies": {
     "critical": []
@@ -54,7 +41,7 @@
   "metadata": {
     "version": "1.0.0",
     "generator": "kuuzuki-opencode-plugin",
-    "created": "2025-08-20T05:01:08.174Z",
+    "created": "2025-08-20T05:36:28.538Z",
     "analyzed": true
   }
 }

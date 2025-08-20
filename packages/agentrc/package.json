@@ -1,6 +1,6 @@
 {
   "name": "@kuuzuki/agentrc",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "🌸 Complete kuuzuki experience for OpenCode - project intelligence, .agentrc support, memory tools, and enhanced AI assistance",
   "type": "module",
   "main": "src/index.js",
@@ -16,7 +16,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node testtt/test-plugin.js",
+    "test": "node test/test-plugin.js",
     "build": "bun --bun build.js",
     "build:watch": "bun --bun --watch build.js",
     "install-global": "npm run build && mkdir -p ~/.config/opencode/plugin && cp dist/kuuzuki-agentrc.js ~/.config/opencode/plugin/kuuzuki-agentrc.js",
