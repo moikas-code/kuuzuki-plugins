@@ -373,6 +373,45 @@ const displayKuuzukiBanner = async (config, logger) => {
 };
 
 /**
+ * Extract rule from natural language input
+ */
+const extractRuleFromNaturalLanguage = (text) => {
+  const message = text.trim();
+  
+  // Common patterns for adding rules
+  const patterns = [
+    /^remember[\s:]+(.+)$/i,
+    /^remember this[\s:]+(.+)$/i,
+    /^add rule[\s:]+(.+)$/i,
+    /^add this rule[\s:]+(.+)$/i,
+    /^note[\s:]+(.+)$/i,
+    /^note this[\s:]+(.+)$/i,
+    /^keep in mind[\s:]+(.+)$/i,
+    /^keep this in mind[\s:]+(.+)$/i,
+    /^don't forget[\s:]+(.+)$/i,
+    /^don't forget that[\s:]+(.+)$/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = message.match(pattern);
+    if (match) {
+      return match[1].trim();
+    }
+  }
+  
+  // Fallback: if it starts with a trigger word, take everything after
+  const triggerWords = ['remember', 'note', 'add rule'];
+  for (const trigger of triggerWords) {
+    if (message.toLowerCase().startsWith(trigger)) {
+      return message.substring(trigger.length).replace(/^[\s:]+/, '').trim();
+    }
+  }
+  
+  // If no pattern matches, return the whole message (minus trigger)
+  return message;
+};
+
+/**
  * Parse memory command from chat text
  */
 const parseMemoryCommandFromText = (text) => {
@@ -430,6 +469,20 @@ const handleMemoryCommand = async (args, config, configPath) => {
       if (!config) throw new Error("No .agentrc config found");
       
       config.rules = config.rules || [];
+      
+      // Check for duplicates (case-insensitive)
+      const normalizedRule = rule.toLowerCase().trim();
+      const isDuplicate = config.rules.some(existingRule => 
+        existingRule.toLowerCase().trim() === normalizedRule
+      );
+      
+      if (isDuplicate) {
+        return {
+          title: "⚠️ Rule Already Exists",
+          output: `Rule already exists: ${rule}`
+        };
+      }
+      
       config.rules.push(rule);
       
       if (configPath) {
@@ -491,18 +544,31 @@ export const KuuzukiAgentrcPlugin = async ({ app, client, $ }) => {
     const notificationConfig = agentrcConfig?.notifications || { mode: 'os', silent: true };
     const logger = createSmartLogger(pluginContext, notificationConfig);
     
-    // Load legacy configs with error handling
-    const legacyConfig = await loadLegacyConfigs(app);
+    // Only load legacy configs if no .agentrc exists
+    let legacyConfig = null;
+    if (!agentrcConfig) {
+      legacyConfig = await loadLegacyConfigs(app);
+      await logger.info("No .agentrc found, loaded legacy configuration from AGENTS.md/CLAUDE.md");
+    } else {
+      await logger.info(".agentrc found, skipping legacy config loading to avoid duplicates");
+    }
     
-    // Merge configs with error handling
+    // Merge configs with error handling (only if legacy config exists)
     const mergedConfig = mergeConfigs(agentrcConfig, legacyConfig);
     
     // Use merged config
     agentrcConfig = mergedConfig;
   
-  // Display welcome banner
+  // Display welcome banner and rules summary
   if (agentrcConfig) {
     await displayKuuzukiBanner(agentrcConfig, logger);
+    
+    // Auto-display rules summary on initialization
+    const ruleCount = agentrcConfig?.rules?.length || 0;
+    if (ruleCount > 0) {
+      await logger.info(`📋 Project has ${ruleCount} active coding rules`);
+      await logger.info("💡 Shortcuts: Type 'rules' or 'show rules' to see all rules anytime");
+    }
   }
 
   return {
@@ -512,14 +578,42 @@ export const KuuzukiAgentrcPlugin = async ({ app, client, $ }) => {
     "chat.message": async (input, output) => {
       const message = output.message?.content;
       
-      // Only intercept messages that start with "memory" - minimal scope
-      if (message && typeof message === 'string' && message.trim().startsWith('memory ')) {
+      // Intercept memory commands AND natural language
+      const trimmedMessage = message && typeof message === 'string' ? message.trim().toLowerCase() : '';
+      
+      // Check for various natural language patterns
+      const isMemoryCommand = trimmedMessage.startsWith('memory ');
+      const isShowRules = trimmedMessage === 'rules' || 
+                         trimmedMessage === 'show rules' ||
+                         trimmedMessage === 'list rules' ||
+                         trimmedMessage === 'what are the rules' ||
+                         trimmedMessage === 'show me the rules';
+      
+      const isRememberPattern = /^(remember|add rule|note|keep in mind|don't forget)[\s:]/i.test(message) ||
+                               /^(remember this|add this rule|note this|keep this in mind)[\s:]/i.test(message);
+      
+      const isForgetPattern = /^(forget|remove|delete)[\s:]/i.test(message) ||
+                             /^(forget rule|remove rule|delete rule)[\s\s]/i.test(message);
+      
+      if (isMemoryCommand || isShowRules || isRememberPattern || isForgetPattern) {
         try {
-          // Parse memory command from chat message
-          const commandText = message.trim();
-          const args = parseMemoryCommandFromText(commandText);
+          // Parse memory command from chat message or natural language
+          let args;
           
-          await logger.info(`🧠 Processing memory command: ${args.action}`);
+          if (isMemoryCommand) {
+            args = parseMemoryCommandFromText(trimmedMessage);
+          } else if (isShowRules) {
+            args = { action: 'list' };
+          } else if (isRememberPattern) {
+            // Extract the rule from natural language
+            const rule = extractRuleFromNaturalLanguage(message);
+            args = { action: 'add', rule };
+          } else if (isForgetPattern) {
+            // Handle removal - could be enhanced to parse rule ID or rule text
+            args = { action: 'remove', ruleId: 0 }; // For now, remove first rule
+          }
+          
+          await logger.info(`🧠 Processing: ${args.action}${args.rule ? ` "${args.rule.substring(0, 50)}..."` : ''}`);
           
           // Execute memory command
           const result = await handleMemoryCommand(args, agentrcConfig, configPath);
@@ -593,6 +687,18 @@ export const KuuzukiAgentrcPlugin = async ({ app, client, $ }) => {
             } catch {
               // No package.json, probably not a Node project
             }
+          } else {
+            // Automatically show project rules at session start
+            await logger.info("📋 Loading project rules from .agentrc...");
+            const ruleCount = agentrcConfig?.rules?.length || 0;
+            const projectName = agentrcConfig?.project?.name || 'Project';
+            await logger.success(`✅ ${projectName}: ${ruleCount} active rules loaded`);
+            
+            // Show a summary of key rules
+            if (agentrcConfig?.rules && agentrcConfig.rules.length > 0) {
+              const keyRules = agentrcConfig.rules.slice(0, 3); // Show first 3 rules
+              await logger.info(`🎯 Key rules: ${keyRules.map(r => `"${r.substring(0, 50)}${r.length > 50 ? '...' : ''}"`).join(', ')}`);
+            }
           }
           break;
 
@@ -605,6 +711,20 @@ export const KuuzukiAgentrcPlugin = async ({ app, client, $ }) => {
             configPath = newPath;
             if (agentrcConfig) {
               await displayKuuzukiBanner(agentrcConfig, logger);
+              
+              // Automatically show updated rules
+              const ruleCount = agentrcConfig?.rules?.length || 0;
+              await logger.success(`🔄 Configuration reloaded: ${ruleCount} rules active`);
+              
+              if (agentrcConfig.rules && agentrcConfig.rules.length > 0) {
+                await logger.info("📋 Current rules summary:");
+                agentrcConfig.rules.slice(0, 5).forEach((rule, index) => {
+                  console.log(`  ${index + 1}. ${rule.substring(0, 80)}${rule.length > 80 ? '...' : ''}`);
+                });
+                if (agentrcConfig.rules.length > 5) {
+                  console.log(`  ... and ${agentrcConfig.rules.length - 5} more rules`);
+                }
+              }
             }
           }
           break;
